@@ -7,20 +7,32 @@ def create_connection():
     return conn
 
 def create_table():
-    """Create tasks table if it doesn't exist"""
+    """Create users and tasks tables if they don't exist"""
     conn = create_connection()
     cursor = conn.cursor()
-    
+
+    # Users Table
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT NOT NULL UNIQUE,
+            password TEXT NOT NULL
+        )
+    """)
+
+    # Tasks Table
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS tasks (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
             title TEXT NOT NULL,
             description TEXT,
             priority TEXT DEFAULT 'Medium',
             due_date TEXT,
-            status TEXT DEFAULT 'Pending'
+            status TEXT DEFAULT 'Pending',
+            FOREIGN KEY (user_id) REFERENCES users (id)
         )
     """)
-    
+
     conn.commit()
     conn.close()
