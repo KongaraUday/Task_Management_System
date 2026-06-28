@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-dark bg-primary">
+        <div class="container">
+            <span class="navbar-brand fw-bold">
+                📋 Task Management System
+            </span>
+            <a href="/add" class="btn btn-light">➕ Add New Task</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <!-- Search Bar -->
+<div class="bg-light py-3 shadow-sm">
+    <div class="container">
+        <form action="/search" method="GET" class="d-flex gap-2">
+            <input type="text" 
+                   name="keyword" 
+                   class="form-control" 
+                   placeholder="🔍 Search tasks by title or description..."
+                   value="{{ keyword if keyword else '' }}">
+            <button type="submit" class="btn btn-primary">Search</button>
+            <a href="/" class="btn btn-outline-secondary">Clear</a>
+        </form>
+    </div>
+</div>
+        <h4 class="mb-3">All Tasks</h4>
+        {% if keyword %}
+<div class="alert alert-info">
+    🔍 Search results for: <strong>{{ keyword }}</strong> 
+    — {{ tasks|length }} task(s) found
+    <a href="/" class="float-end">Clear Search</a>
+</div>
+{% endif %}
+
+        {% if tasks %}
+        <table class="table table-bordered table-hover shadow">
+            <thead class="table-primary">
+                <tr>
+                    <th>#</th>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Priority</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in tasks %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ task["title"] }}</td>
+                    <td>{{ task["description"] }}</td>
+                    <td>
+                        {% if task["priority"] == "High" %}
+                            <span class="badge bg-danger">High</span>
+                        {% elif task["priority"] == "Medium" %}
+                            <span class="badge bg-warning text-dark">Medium</span>
+                        {% else %}
+                            <span class="badge bg-success">Low</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ task["due_date"] }}</td>
+                    <td>
+                        {% if task["status"] == "Completed" %}
+                            <span class="badge bg-success">Completed</span>
+                        {% elif task["status"] == "In Progress" %}
+                            <span class="badge bg-info text-dark">In Progress</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Pending</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="/update/{{ task['id'] }}" 
+                           class="btn btn-sm btn-warning">✏️ Update</a>
+                        <a href="/delete/{{ task['id'] }}" 
+                           class="btn btn-sm btn-danger"
+                           onclick="return confirm('Are you sure?')">🗑️ Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="alert alert-info">
+            No tasks found! Click "Add New Task" to get started.
+        </div>
+        {% endif %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

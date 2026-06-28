@@ -3,6 +3,7 @@ import sqlite3
 def create_connection():
     """Create a database connection to SQLite database"""
     conn = sqlite3.connect("tasks.db")
+    conn.row_factory = sqlite3.Row
     return conn
 
 def create_table():
@@ -23,8 +24,3 @@ def create_table():
     
     conn.commit()
     conn.close()
-    print("Database setup complete!")
-
-# Run when file is executed
-if __name__ == "__main__":
-    create_table()
